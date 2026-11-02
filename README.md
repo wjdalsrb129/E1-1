@@ -149,14 +149,47 @@ Git: 2.53.0
     ```
     - 검증 증거: [`rm` 결과](./evidence/1.terminal_img/9.rm.png)
 
-#### (2) 권한 실습 및 증거 기록
--->
-
 #### (2) 파일 권한
 <!-- 권한을 확인/변경하는 명령을 수행하고, 변경 전/후 비교를 기술 문서에 남긴다.
 최소 요구: 파일 1개, 디렉토리 1개에 대해 권한 변경 실험을 수행한다. -->
+- 검증 대상: **권한 확인**
+    - 검증 방법(명령어): `ls -l`
+    - 검증 결과(출력):
+    ```
+    $ ls -l
+    total 24
+    -rw-r--r-- 1 ruav ruav 10931 Nov  2 21:44 README.md
+    drwxr-xr-x 6 ruav ruav  4096 Nov  2 20:30 evidence
+    -rw-r--r-- 1 ruav ruav    31 Nov  2 20:42 hello.txt
+    drwxr-xr-x 2 ruav ruav  4096 Nov  2 20:51 new_dir
+    ```
+    - 검증 증거: [`ls-l` 결과](./evidence/1.terminal_img/10.ls-l.png)
 
+- 검증 대상: **파일 권한 변경/확인**
+    - 검증 방법(명령어): `chmod`
+    - 검증 결과(출력):
+    ```
+    $ ls -l
+    total 24
+    -rw-r--r-- 1 ruav ruav 11826 Nov  2 21:51 README.md
+    drwxr-xr-x 6 ruav ruav  4096 Nov  2 20:30 evidence
+    -rwxrw-rw- 1 ruav ruav    31 Nov  2 20:42 hello.txt
+    drwxr-xr-x 2 ruav ruav  4096 Nov  2 20:51 new_dir
+    ```
+    - 검증 증거: [`chmod` 결과](./evidence/1.terminal_img/11.chmod_file.png) 
 
+- 검증 대상: **디렉토리 권한 변경/확인**
+    - 검증 방법(명령어): `chmod`
+    - 검증 결과(출력):
+    ```
+    $ ls -l
+    total 28
+    -rw-r--r-- 1 ruav ruav 12304 Nov  2 22:17 README.md
+    drwxr-xr-x 6 ruav ruav  4096 Nov  2 20:30 evidence
+    -rwxrw-rw- 1 ruav ruav    31 Nov  2 20:42 hello.txt
+    drwxr--r-- 2 ruav ruav  4096 Nov  2 20:51 new_dir
+    ```
+    - 검증 증거: [`chmod` 결과](./evidence/1.terminal_img/12.chmod_file.png) 
 
 
 
