@@ -495,7 +495,7 @@ docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 
     CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES  
     ```
     &rarr; 현재 running 중인 컨테이너만 접근 가능하나, exit 실행 시 컨테이너가 **종료**됨
-    - 검증 증거: [`docker exec` 결과](./evidence/2.docker/3-4.docker-attach.png)
+    - 검증 증거: [`docker attach` 결과](./evidence/2.docker/3-4.docker-attach.png)
 
 
 
