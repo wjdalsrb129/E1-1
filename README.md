@@ -420,7 +420,7 @@ docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 
     ```
     - 검증 증거: [`docker run hello-world` 결과](./evidence/2.docker/3-1.docker-run-hello-world.png)
 
-- 검증 대상: **컨테이너로 Ubuntu 실행 후 내부 진입하여 명령(`ls`, `echo` 등) 수행 **
+- 검증 대상: **컨테이너로 Ubuntu 실행 후 내부 진입하여 명령(`ls`, `echo` 등) 수행**
     - 검증 방법(명령어): `docker run -it --name mybox ubuntu`
     - 검증 결과(출력):
     ```
@@ -441,7 +441,63 @@ docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 
     ```
     - 검증 증거: [`docker run -it --name mybox ubuntu` 결과](./evidence/2.docker/3-2.docker-run-mybox.png)
 
-컨테이너 종료/유지(attach/exec 등)의 차이를 스스로 관찰하고 간단히 정리한다.
+- 검증 대상: **컨테이너 접근 방식 비교 (exit 실행 시 유지)**
+    - 검증 방법(명령어): `docker exec`
+    - 검증 결과(출력):
+    ```
+    $ docker ps
+    CONTAINER ID   IMAGE     COMMAND       CREATED             STATUS          PORTS     NAMES
+    c18c2fb905d6   ubuntu    "/bin/bash"   About an hour ago   Up 19 seconds             mybox
+    PS C:\Users\User\Desktop\mkj\E1-1> docker ps -a
+    CONTAINER ID   IMAGE         COMMAND       CREATED             STATUS                   PORTS     NAMES
+    c18c2fb905d6   ubuntu        "/bin/bash"   About an hour ago   Up 23 seconds                      mybox
+    1e27a1d049d8   hello-world   "/hello"      2 hours ago         Exited (0) 2 hours ago             sharp_neumann
+    
+    $ docker exec -it mybox /bin/bash
+    root@c18c2fb905d6:/# exit
+    exit
+
+    What's next:
+        Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug mybox
+        Learn more at https://docs.docker.com/go/debug-cli/
+
+    $ docker exec -it sharp_neumann /bin/bash
+    Error response from daemon: container 1e27a1d049d8454c1355a87ceb6ddc10e6aad125d080a5fc480e5deded277afb is not running
+
+    What's next:
+        Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug sharp_neumann
+        Learn more at https://docs.docker.com/go/debug-cli/
+
+    $ docker ps                              
+    CONTAINER ID   IMAGE     COMMAND       CREATED             STATUS          PORTS     NAMES
+    c18c2fb905d6   ubuntu    "/bin/bash"   About an hour ago   Up 53 seconds             mybox
+    ```
+    &rarr; 현재 running 중인 컨테이너만 exec으로 접근 가능하고, exit 실행해도 **유지**됨
+    - 검증 증거: [`docker exec` 결과](./evidence/2.docker/3-3.docker-exec.png)
+
+- 검증 대상: **컨테이너 접근 방식 비교 (exit 실행 시 종료)**
+    - 검증 방법(명령어): `docker attach`
+    - 검증 결과(출력):
+    ```
+    $ docker ps -a                           
+    CONTAINER ID   IMAGE         COMMAND       CREATED             STATUS                   PORTS     NAMES
+    c18c2fb905d6   ubuntu        "/bin/bash"   About an hour ago   Up 10 seconds                      mybox
+    1e27a1d049d8   hello-world   "/hello"      2 hours ago         Exited (0) 2 hours ago             sharp_neumann
+    
+    $ docker attach sharp_neumann
+    cannot attach to a stopped container, start it first
+
+    $ docker attach mybox         
+    root@c18c2fb905d6:/# exit
+    exit
+    
+    $ docker ps                  
+    CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES  
+    ```
+    &rarr; 현재 running 중인 컨테이너만 접근 가능하나, exit 실행 시 컨테이너가 **종료**됨
+    - 검증 증거: [`docker exec` 결과](./evidence/2.docker/3-4.docker-attach.png)
+
+
 
 - 간단한 웹 서버를 Dockerfile로 컨테이너화
 - 포트 매핑으로 접속을 확인
