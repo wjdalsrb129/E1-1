@@ -28,6 +28,7 @@ Git: 2.53.0
 |---|---|---|
 | 리눅스 CLI | [(1) 터미널 기본 조작](#1-터미널-기본-조작) | 현재 위치 확인, 목록 확인(숨김 파일 포함), 이동, 생성, 복사, 이동/이름변경, 삭제, 파일 내용 확인, 빈 파일 생성 |
 | 리눅스 CLI | [(2) 파일 권한](#2-파일-권한) | 권한 확인/변경, 권한 변경 전/후 비교 |
+| Docker | [(3) 파일 권한](#2-파일-권한) | 권한 확인/변경, 권한 변경 전/후 비교 |
 
 
 ### 1) 리눅스 CLI
@@ -344,7 +345,7 @@ docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 
     CONTAINER ID   IMAGE         COMMAND       CREATED          STATUS                      PORTS     NAMES
     c18c2fb905d6   ubuntu        "/bin/bash"   7 minutes ago    Exited (0) 6 minutes ago              mybox
     ```
-    - 검증 증거: [`docker ps -a` 결과](./evidence/2.docker/2-2.docker-ps.png)
+    - 검증 증거: [`docker ps` 결과](./evidence/2.docker/2-2.docker-ps.png)
 
 
 - 검증 대상: **Docker 컨테이너 실행/중지/목록 확인 (모든 컨테이너)**
@@ -472,7 +473,7 @@ docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 
     CONTAINER ID   IMAGE     COMMAND       CREATED             STATUS          PORTS     NAMES
     c18c2fb905d6   ubuntu    "/bin/bash"   About an hour ago   Up 53 seconds             mybox
     ```
-    &rarr; 현재 running 중인 컨테이너만 exec으로 접근 가능하고, exit 실행해도 **유지**됨
+    &rarr; 현재 running 중인 컨테이너만 exec으로 접근 가능하고, exit 실행해도 컨테이너가 **유지**됨
     - 검증 증거: [`docker exec` 결과](./evidence/2.docker/3-3.docker-exec.png)
 
 - 검증 대상: **컨테이너 접근 방식 비교 (exit 실행 시 종료)**
@@ -507,70 +508,196 @@ docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 
 
 
 #### (4) 기존 Dockerfile 기반 커스텀 이미지 제작
-
 아래 방식 중 하나를 선택하여 기존 Dockerfile/이미지 기반의 커스텀 이미지를 만든다.
 (A) 웹 서버 베이스 이미지 활용(예: NGINX/Apache 등) + 정적 콘텐츠/설정만 교체
 (B) Linux 베이스 이미지(예: ubuntu/alpine 등) + 기본 기능(패키지/사용자/환경변수/헬스체크 등) 추가
-제작 결과는 아래 조건을 만족해야 한다.
-커스텀 이미지 빌드 성공 및 컨테이너 실행 성공
-기술 문서에 다음을 포함한다.
-어떤 “기존 베이스(이미지/예시 Dockerfile)”를 선택했는지
-내가 적용한 커스텀 포인트 각각의 목적(간단 요약)
-빌드/실행 명령 + 핵심 결과(출력/스크린샷)
+
+- 기존 베이스 이미지/Dockerfile: **웹 서버 베이스 이미지 (NGINX)**
+- 커스텀 포인트: 기존 nginx(웹 서버) 이미지를 가져와 정적 콘텐츠(html 파일) 하나만 바꿔 넣은 "커스텀 이미
+지"를 만들고, 포트를 연결해 브라우저로 접속
+
+- 검증 대상: **기존 Dockerfile 기반 커스텀 이미지 제작 및 빌드**
+    - 검증 방법(명령어): `docker build -t my-web .`
+    - 검증 결과(출력):
+    ```
+    $ docker build -t my-web .                          
+    [+] Building 11.7s (7/7) [+] Building 11.7s (7/7)FINISHED                                                                                                                                                        docker:desktop-linux
+    => [internal] load build definition from Dockerfile  
+    ...
+
+    $ docker images  
+    my-web:latest   f0a58dcafe93        241MB         63.9MB        
+    ```
+    - 검증 증거: [`docker build` 결과](./evidence/2.docker/4-1.docker_build-t_my-web_.png)
+    
+- 검증 대상: **커스텀 이미지 기반 컨테이너 실행**
+    - 검증 방법(명령어): `docker run -d -p 8080:80 --name my-web_cnt my-web`
+    - 검증 결과(출력):
+    ```
+    $ docker ps -a                                     
+    CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+    
+    $ docker run -d -p 8080:80 --name my-web_cnt my-web
+    27d868f12584a4c323a067cb490fbf03e6b5935eb3ff7f4052df0901dc92db2d
+    
+    $ docker ps                                        
+    CONTAINER ID   IMAGE     COMMAND                   CREATED         STATUS         PORTS                                     NAMES
+    27d868f12584   my-web    "/docker-entrypoint.…"   7 seconds ago   Up 7 seconds   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-web_cnt       
+    ```
+    - 검증 증거: [`docker run -d -p 8080:80 --name my-web_cnt my-web` 결과](./evidence/2.docker/4-2.docker_run_custom.png)
+    - 실행 증거: <br>
+    ![커스텀 이미지 기반 웹 브라우저 실행 결과](./evidence/2.docker/4-3.docker_run_custom_browser.png)
 
 #### (5) 포트 매핑 및 접속 증거
-브라우저 접속 화면(또는 curl 응답)을 기술 문서에 첨부한다.
+- 검증 대상: **포트 매핑 및 접속 여부**
+    - 검증 방법(명령어): `docker run -d -p 8081:80 --name my-web_cnt_2 my-web`
+    - 검증 결과(출력):
+    ```
+    $ docker ps
+    CONTAINER ID   IMAGE     COMMAND                   CREATED         STATUS         PORTS                                     NAMES
+    27d868f12584   my-web    "/docker-entrypoint.…"   7 minutes ago   Up 7 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-web_cnt
+    
+    $ docker run -d -p 8081:80 --name my-web_cnt_2 my-web   
+    fcfb4e9be2762a3175aaf2422453f124526d50037afb6af23212618f4ff1c047
+    
+    $ docker ps                                          
+    CONTAINER ID   IMAGE     COMMAND                   CREATED         STATUS         PORTS                                     NAMES
+    fcfb4e9be276   my-web    "/docker-entrypoint.…"   2 seconds ago   Up 2 seconds   0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   my-web_cnt_2
+    27d868f12584   my-web    "/docker-entrypoint.…"   7 minutes ago   Up 7 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-web_cnt     
+    ```
+    - 검증 증거: [`docker run -d -p 8081:80 --name my-web_cnt_2 my-web` 추가 포트 매핑 결과](./evidence/2.docker/5-1.port_mapping.png)
+    - 실행 증거: <br>
+    ![새로운 로컬 포트와 컨테이터 포트 매핑 브라우저 실행 결과](./evidence/2.docker/5-2.port_mapping_browser.png)
+
 
 #### (6) Docker 볼륨 영속성 검증
-Docker 볼륨을 생성하고 컨테이너에 연결한다.
-컨테이너 삭제 전/후로 데이터를 확인하여 데이터가 유지됨을 증명한다.
-기술 문서에 생성/연결/검증 절차(명령+출력)를 포함한다.
+
+- 검증 대상: **바인드 마운트 (내 폴더를 컨테이너에 연결)**
+    - 검증 방법(명령어): `docker run -d -p 8082:80 --name my-web-live -v ${PWD}:/usr/share/nginx/html nginx`
+    - 검증 결과(출력):
+    ```
+    $ docker run -d -p 8082:80 --name my-web-live -v ${PWD}:/usr/share/nginx/html nginx
+    120661faf420988a47fad3329b8ae0a6ea81e8c9ee8bb2753e039404294d90dd
+    
+    $ docker ps                                          
+    CONTAINER ID   IMAGE     COMMAND                   CREATED         STATUS         PORTS                                     NAMES
+    120661faf420   nginx     "/docker-entrypoint.…"   5 seconds ago   Up 4 seconds   0.0.0.0:8082->80/tcp, [::]:8082->80/tcp   my-web-live     
+    ```
+    - 검증 증거: [`docker run -d -p 8082:80 --name my-web-live -v ${PWD}:/usr/share/nginx/html nginx` 바인드 마운트 결과](./evidence/2.docker/6-1.bind_mount.png)
+    - 실행 증거: <br>
+        - 바인드 마운트 브라우저 실행 결과 (html 파일 수정 전) <br>
+            ![바인드 마운트 브라우저 실행 결과 (html 파일 수정 전)](./evidence/2.docker/6-2.bind_mount_browser_before.png)
+        - html 파일 수정 <br>
+            ![html 파일 수정](./evidence/2.docker/6-3.bind_mount_html.png)
+        - 바인드 마운트 브라우저 새로 고침 실행 시 <br>
+            ![바인드 마운트 브라우저 새로 고침 실행 결과](./evidence/2.docker/6-4.bind_mount_browser_after.png)
 
 
-실행 결과(로그/접속/데이터 유지)로 핵심 흐름을 확인
 
-이미지와 컨테이너의 분리
-격리된 실행 환경
-포트·스토리지 연결 방식
+- 검증 대상: **볼륨 (Docker가 관리하는 저장 공간)**
+    - 검증 방법(명령어): `docker volume create mydata`
+    - 검증 결과(출력):
+    ```
+    $ docker volume create mydata # 도커 볼륨 생성
+    mydata
+    
+    $ docker run -it --name vol-test-cnt -v mydata:/data ubuntu # 컨테이너에 연결
+    root@767901c96773:/# echo "hello volume!" > /data/memo.txt
+    root@767901c96773:/# exit
+    exit
+    
+    $ docker rm vol-test-cnt # 연결한 컨테이너 삭제
+    vol-test-cnt
+    
+    $ docker run -it --name vol-check-cnt -v mydata:/data ubuntu # 새로운 컨테이너와 연결                 
+    root@ce322bd6edb8:/# cat /d
+    data/ dev/  
+    root@ce322bd6edb8:/# cat /data/memo.txt 
+    hello volume! # 데이터 유지 확인
+    root@ce322bd6edb8:/# exit
+    exit
+    
+    $ docker volume ls
+    DRIVER    VOLUME NAME
+    local     mydata     
+    ```
+    - 검증 증거: [`docker volume create mydata` 볼륨 결과](./evidence/2.docker/6-5.volume.png)
+
 &rarr; "왜 이런 설계가 필요한지"를 설명 가능한 형태로 정리
-
-- Docker 운영/검증 로그
-docker --version, docker info 등 설치·점검 결과
-docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 흔적
-- Dockerfile 기반 웹 서버 컨테이너
-웹 서버 소스코드(예: app/ 또는 src/)
-Dockerfile
-빌드/실행 명령 및 결과 로그(터미널 스크린샷 가능)
-포트 매핑 접속 성공 증거(스크린샷 또는 로그)
-- 포트 매핑 접속 증거
-p <host_port>:<container_port>로 실행 후, 브라우저 접속 화면(주소창 포함)을 기술 문서에 첨부한다.
-- 바인드 마운트 반영 + 볼륨 영속성 증거
-바인드 마운트: 실행 명령 + 호스트 변경 전/후 비교
-Docker 볼륨: 생성/연결/검증 명령 + 컨테이너 삭제 전/후 비교
-
+- 이미지와 컨테이너의 분리
+    - 동일한 이미지를 이용해서 여러 개의 컨테이너를 실행할 때, 공통적으로 사용되는 데이터를 매번 저장하면 컨테이너 자체가 무거워짐
+- 격리된 실행 환경
+    - 컨테이너와 데이터를 격리해서 관리 가능
+- 포트·스토리지 연결 방식
+    - 컨테이너와 외부를 독립
 
 ### 3) Git/GitHub
 - Git 설정 및 GitHub/VSCode 연동 증거
 
-#### Git 설정 및 GitHub 연동
-* Git 사용자 정보/기본 브랜치 설정을 완료하고 git config --list 결과를 기록한다.
-* GitHub 로그인 및 저장소 연동을 완료하고, 연동 증거(스크린샷 등)를 기술 문서에 첨부한다.
+#### (1) Git 설정
+- 검증 대상: **Git 사용자 정보/기본 브랜치 설정**
+    - 검증 방법(명령어): `git config user.name`, `git config user.email`, `git config --global init.defaultBranch main` (계정은 프로젝트 폴더에 한정)
+    - 검증 결과(출력):
+    ```
+    $ git config user.name wjdalsrb129
+    
+    $ git config user.email wjdalsrb129@gamli.com
+    
+    $ git config --global init.defaultBranch main
+    
+    $ git config --list
+    diff.astextplain.textconv=astextplain
+    filter.lfs.clean=git-lfs clean -- %f
+    filter.lfs.smudge=git-lfs smudge -- %f
+    filter.lfs.process=git-lfs filter-process
+    filter.lfs.required=true
+    http.sslbackend=schannel
+    core.autocrlf=true
+    core.fscache=true
+    core.symlinks=false
+    pull.rebase=false
+    credential.helper=manager
+    credential.https://dev.azure.com.usehttppath=true
+    init.defaultbranch=master
+    init.defaultbranch=main
+    core.repositoryformatversion=0
+    core.filemode=false
+    core.bare=false
+    core.logallrefupdates=true
+    core.symlinks=false
+    core.ignorecase=true
+    remote.origin.url=https://github.com/wjdalsrb129/E1-1.git
+    remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+    branch.main.remote=origin
+    branch.main.merge=refs/heads/main
+    branch.main.vscode-merge-base=origin/main
+    user.name=wjdalsrb129
+    user.email=wjdalsrb129@gmail.com
+    ```
+    - 검증 증거: [`git config` git 설정 결과](./evidence/3.git/1.git_setting.png) 
+
+#### (2) GitHub 연동
+- 검증 대상: **GitHub 로그인 및 저장소와 vs code 연동**
+    - 검증 방법(명령어): vs code에서 github 연동
+    - 검증 증거: <br> 
+        ![Github 연동 결과](./evidence/3.git/2.github_vs_code.png) 
+        
+
+### 4) 트러블 슈팅
 
 ## 검증 방법(어떤 명령으로 무엇을 확인했는지) + 결과 위치 링크
 ## 트러블슈팅 2건 이상(문제 → 원인 가설 → 확인 → 해결/대안)
 ## 기술 문서만 읽어도 전체 수행 내용을 파악할 수 있어야 한다.
 
 ## 과제 목표
-절대 경로와 상대 경로의 차이를 예시를 들어 설명할 수 있다.
+- 절대 경로와 상대 경로의 차이를 예시를 들어 설명할 수 있다.
     절대 경로: 전체 경로를 모두 나열
     상대 경로: 현재 위치 기준으로 폴더 구조 표현 &rarr; 다른 환경에서 실행할 때 필요
-파일 권한의 의미(r/w/x)와 755, 644 같은 표기가 어떤 규칙으로 해석되는지 설명할 수 있다.
-기존 Dockerfile을 기반으로 “커스텀 이미지”를 만들 수 있다.
-포트 매핑이 필요한 이유를 설명할 수 있다.
-Docker 볼륨(영속 데이터)을 설명할 수 있다.
-Git과 GitHub의 역할 차이(로컬 버전관리 vs 원격 협업 플랫폼)를 설명할 수 있다.
-
-
+- 파일 권한의 의미(r/w/x)와 755, 644 같은 표기가 어떤 규칙으로 해석되는지 설명할 수 있다.
+- 기존 Dockerfile을 기반으로 “커스텀 이미지”를 만들 수 있다.
+- 포트 매핑이 필요한 이유를 설명할 수 있다.
+- Docker 볼륨(영속 데이터)을 설명할 수 있다.
+- Git과 GitHub의 역할 차이(로컬 버전관리 vs 원격 협업 플랫폼)를 설명할 수 있다.
 
 ## 보너스 과제 (선택)
 Docker Compose 기초
