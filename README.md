@@ -193,35 +193,264 @@ Git: 2.53.0
 
 
 
-### 2) Docker
-- Docker를 설치 및 점검
+### 2) Docker 설치 및 기본 점검
 
-#### Docker 설치 및 기본 점검
-    Docker 버전 확인 결과를 기록한다. (docker --version)
-    Docker 데몬 동작 여부 확인 결과를 기록한다. (docker info 또는 동등 점검)
+#### (1) Docker 설치
+- 검증 대상: **Docker 버전 확인**
+    - 검증 방법(명령어): `docker --version`
+    - 검증 결과(출력):
+    ```
+    $ docker --version
+    Docker version 29.9.2, build a82e528
+    ```
+    - 검증 증거: [`docker --version` 결과](./evidence/2.docker/1-1.docker--version.png) 
 
-docker --version, docker info 등 설치·점검 결과
+- 검증 대상: **Docker 데몬 동작 여부**
+    - 검증 방법(명령어): `docker info`
+    - 검증 결과(출력):
+    ```
+    $ docker info
+    Client:
+    Version:    29.9.2
+    Context:    desktop-linux
+    Debug Mode: false
+    Plugins:
+    agent: Docker AI Agent Runner (Docker Inc.)
+        Version:  v1.152.0
+        Path:     C:\Program Files\Docker\cli-plugins\docker-agent.exe
+    ai: Docker AI Agent - Ask Gordon (Docker Inc.)
+        Version:  v1.33.0
+        Path:     C:\Program Files\Docker\cli-plugins\docker-ai.exe
+    buildx: Docker Buildx (Docker Inc.)
+        Version:  v0.38.1
+        Path:     C:\Program Files\Docker\cli-plugins\docker-buildx.exe
+    compose: Docker Compose (Docker Inc.)
+        Version:  v5.6.1
+        Path:     C:\Program Files\Docker\cli-plugins\docker-compose.exe
+    debug: Get a shell into any image or container (Docker Inc.)
+        Version:  0.49.0
+        Path:     C:\Program Files\Docker\cli-plugins\docker-debug.exe
+    desktop: Docker Desktop commands (Docker Inc.)
+        Version:  4.97.0
+        Path:     C:\Program Files\Docker\cli-plugins\docker-desktop.exe
+    dhi: CLI for managing Docker Hardened Images (Docker Inc.)
+        Version:  v0.0.9
+        Path:     C:\Program Files\Docker\cli-plugins\docker-dhi.exe
+    extension: Manages Docker extensions (Docker Inc.)
+        Version:  v0.2.32
+        Path:     C:\Program Files\Docker\cli-plugins\docker-extension.exe
+    init: Creates Docker-related starter files for your project (Docker Inc.)
+        Version:  v1.4.1
+        Path:     C:\Program Files\Docker\cli-plugins\docker-init.exe
+    mcp: Docker MCP Plugin (Docker Inc.)
+        Version:  v0.44.2
+        Path:     C:\Program Files\Docker\cli-plugins\docker-mcp.exe
+    model: Docker Model Runner (Docker Inc.)
+        Version:  v1.2.9
+        Path:     C:\Program Files\Docker\cli-plugins\docker-model.exe
+    offload: Docker Offload (Docker Inc.)
+        Version:  v0.7.21
+        Path:     C:\Program Files\Docker\cli-plugins\docker-offload.exe
+    pass: Docker Pass Secrets Manager Plugin (beta) (Docker Inc.)
+        Version:  v0.3.2
+        Path:     C:\Program Files\Docker\cli-plugins\docker-pass.exe
+    sandbox: "docker sandbox" is deprecated, use Docker Sandboxes instead (Docker Inc.)
+        Version:  v0.13.0
+        Path:     C:\Program Files\Docker\cli-plugins\docker-sandbox.exe
+    scout: Docker Scout (Docker Inc.)
+        Version:  v1.27.0
+        Path:     C:\Program Files\Docker\cli-plugins\docker-scout.exe
+
+    Server:
+    Containers: 0
+    Running: 0
+    Paused: 0
+    Stopped: 0
+    Images: 0
+    Server Version: 29.9.2
+    Storage Driver: overlayfs
+    driver-type: io.containerd.snapshotter.v1
+    Logging Driver: local
+    Cgroup Driver: cgroupfs
+    Cgroup Version: 2
+    Plugins:
+    Volume: local
+    Network: bridge host ipvlan macvlan null overlay
+    Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog
+    CDI spec directories:
+    /etc/cdi
+    /var/run/cdi
+    Discovered Devices:
+    cdi: docker.com/gpu=webgpu
+    Swarm: inactive
+    Runtimes: io.containerd.runc.v2 nvidia runc
+    Default Runtime: runc
+    Init Binary: docker-init
+    containerd version: b7a25261e029d68978bbf290df0a62fc819b3c51
+    runc version: v1.5.2-0-g29dd3dc2
+    init version: de40ad0
+    Security Options:
+    seccomp
+    Profile: builtin
+    cgroupns
+    Kernel Version: 6.18.54.1-microsoft-standard-WSL2
+    Operating System: Docker Desktop
+    OSType: linux
+    Architecture: x86_64
+    CPUs: 12
+    Total Memory: 7.577GiB
+    Name: docker-desktop
+    ID: 982a4296-0df7-401f-b6a6-954bf9a00c8b
+    Docker Root Dir: /var/lib/docker
+    Debug Mode: false
+    HTTP Proxy: http.docker.internal:3128
+    HTTPS Proxy: http.docker.internal:3128
+    No Proxy: hubproxy.docker.internal
+    Labels:
+    com.docker.desktop.address=npipe://\\.\pipe\docker_cli
+    Experimental: false
+    Insecure Registries:
+    hubproxy.docker.internal:5555
+    127.0.0.0/8
+    ::1/128
+    Live Restore Enabled: false
+    Firewall Backend: iptables
+    ```
+    - 검증 증거: [`docker info` 결과](./evidence/2.docker/1-2.docker-info.png) 
+
+#### (2) Docker 기본 운영 명령 수행
+docker run hello-world 실행 후 
 docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 흔적
 
-#### Docker 기본 운영 명령 수행
-
-이미지: 다운로드/목록 확인 (예: docker images)
-컨테이너: 실행/중지/목록 확인 (예: docker ps, docker ps -a)
 운영: 로그 확인 (예: docker logs), 리소스 확인 (예: docker stats)
 수행 명령과 출력 결과를 기술 문서에 남긴다.
 
-#### 컨테이너 실행 실습
+- 검증 대상: **Docker 이미지 다운로드/목록 확인**
+    - 검증 방법(명령어): `docker images`
+    - 검증 결과(출력):
+    ```
+    $ docker images
+    IMAGE                ID             DISK USAGE   CONTENT SIZE   EXTRA
+    hello-world:latest   c567b231f656       25.9kB         9.49kB    U   
+    ubuntu:latest        6a06111c3b0a        163MB         45.9kB    U   
+    ```
+    - 검증 증거: [`docker images` 결과](./evidence/2.docker/2-1.docker-images.png)
 
-hello-world 실행 성공을 기록한다.
-ubuntu 컨테이너를 실행하고 내부 진입 후 간단 명령(예: ls, echo) 수행 결과를 기록한다.
+- 검증 대상: **Docker 컨테이너 실행/중지/목록 확인 (현재 running 중인 up 상태의 컨테이너)**
+    - 검증 방법(명령어): `docker ps`
+    - 검증 결과(출력):
+    ```
+    $ docker ps -a
+    CONTAINER ID   IMAGE         COMMAND       CREATED          STATUS                      PORTS     NAMES
+    c18c2fb905d6   ubuntu        "/bin/bash"   7 minutes ago    Exited (0) 6 minutes ago              mybox
+    ```
+    - 검증 증거: [`docker ps -a` 결과](./evidence/2.docker/2-2.docker-ps.png)
+
+
+- 검증 대상: **Docker 컨테이너 실행/중지/목록 확인 (모든 컨테이너)**
+    - 검증 방법(명령어): `docker ps -a`
+    - 검증 결과(출력):
+    ```
+    $ docker ps -a
+    CONTAINER ID   IMAGE         COMMAND       CREATED          STATUS                      PORTS     NAMES
+    c18c2fb905d6   ubuntu        "/bin/bash"   7 minutes ago    Exited (0) 6 minutes ago              mybox
+    1e27a1d049d8   hello-world   "/hello"      42 minutes ago   Exited (0) 28 minutes ago             sharp_neumann
+    ```
+    - 검증 증거: [`docker ps -a` 결과](./evidence/2.docker/2-3.docker-ps-a.png)
+
+- 검증 대상: **Docker 운영 로그 확인**
+    - 검증 방법(명령어): `docker logs mybox`
+    - 검증 결과(출력):
+    ```
+    $ docker logs mybox
+    root@c18c2fb905d6:/# ls
+    bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+    root@c18c2fb905d6:/# echo "ubuntu in the mybox container" 
+    ubuntu in the mybox container
+    root@c18c2fb905d6:/# exit
+    exit
+    ```
+    - 검증 증거: [`docker logs mybox` 결과](./evidence/2.docker/2-4.docker-logs-mybox.png)
+
+- 검증 대상: **Docker 리소스 확인**
+    - 검증 방법(명령어): `docker stats --no-stream`
+    - 검증 결과(출력):
+    ```
+    $ docker stats --no-stream
+    CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O     PIDS
+    c18c2fb905d6   mybox     0.00%     4.512MiB / 7.577GiB   0.06%     1.17kB / 126B   20.6MB / 0B   1    
+    ```
+    - 검증 증거: [`docker stats --no-stream` 결과](./evidence/2.docker/2-5.docker-stats--no-stream.png)
+
+
+#### (3) 컨테이너 실행 관리
+
+- 검증 대상: **Docker 테스트용 이미지 hello-world 실행**
+    - 검증 방법(명령어): `docker run hello-world`
+    - 검증 결과(출력):
+    ```
+    $ docker run hello-world
+    Unable to find image 'hello-world:latest' locally
+    latest: Pulling from library/hello-world
+    4f55086f7dd0: Pull complete 
+    d5e71e642bf5: Download complete 
+    Digest: sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
+    Status: Downloaded newer image for hello-world:latest
+
+    Hello from Docker!
+    This message shows that your installation appears to be working correctly.
+
+    To generate this message, Docker took the following steps:
+    1. The Docker client contacted the Docker daemon.
+    2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+        (amd64)
+    3. The Docker daemon created a new container from that image which runs the
+        executable that produces the output you are currently reading.
+    4. The Docker daemon streamed that output to the Docker client, which sent it
+        to your terminal.
+
+    To try something more ambitious, you can run an Ubuntu container with:
+    $ docker run -it ubuntu bash
+
+    Share images, automate workflows, and more with a free Docker ID:
+    https://hub.docker.com/
+
+    For more examples and ideas, visit:
+    https://docs.docker.com/get-started/
+    ```
+    - 검증 증거: [`docker run hello-world` 결과](./evidence/2.docker/3-1.docker-run-hello-world.png)
+
+- 검증 대상: **컨테이너로 Ubuntu 실행 후 내부 진입하여 명령(`ls`, `echo` 등) 수행 **
+    - 검증 방법(명령어): `docker run -it --name mybox ubuntu`
+    - 검증 결과(출력):
+    ```
+    $ docker run -it --name mybox ubuntu
+    Unable to find image 'ubuntu:latest' locally
+    latest: Pulling from library/ubuntu
+    f3f25b84a7d7: Pull complete 
+    edafa32f5d9e: Pull complete 
+    21594acc2d8b: Download complete 
+    Digest: sha256:6a06111c3b0a8600feadb270aec771dc239bf407b25625f93f44ab00e11f4d3c
+    Status: Downloaded newer image for ubuntu:latest
+    root@c18c2fb905d6:/# ls
+    bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+    root@c18c2fb905d6:/# echo "ubuntu in the mybox container" 
+    ubuntu in the mybox container
+    root@c18c2fb905d6:/# exit
+    exit
+    ```
+    - 검증 증거: [`docker run -it --name mybox ubuntu` 결과](./evidence/2.docker/3-2.docker-run-mybox.png)
+
 컨테이너 종료/유지(attach/exec 등)의 차이를 스스로 관찰하고 간단히 정리한다.
 
-- 컨테이너를 실행/관리
 - 간단한 웹 서버를 Dockerfile로 컨테이너화
 - 포트 매핑으로 접속을 확인
 - 바인드 마운트/볼륨으로 "변경 반영"과 "데이터 영속성"을 직접 검증
 
-#### 기존 Dockerfile 기반 커스텀 이미지 제작
+
+
+
+#### (4) 기존 Dockerfile 기반 커스텀 이미지 제작
 
 아래 방식 중 하나를 선택하여 기존 Dockerfile/이미지 기반의 커스텀 이미지를 만든다.
 (A) 웹 서버 베이스 이미지 활용(예: NGINX/Apache 등) + 정적 콘텐츠/설정만 교체
@@ -233,10 +462,10 @@ ubuntu 컨테이너를 실행하고 내부 진입 후 간단 명령(예: ls, ech
 내가 적용한 커스텀 포인트 각각의 목적(간단 요약)
 빌드/실행 명령 + 핵심 결과(출력/스크린샷)
 
-#### 포트 매핑 및 접속 증거
+#### (5) 포트 매핑 및 접속 증거
 브라우저 접속 화면(또는 curl 응답)을 기술 문서에 첨부한다.
 
-#### Docker 볼륨 영속성 검증
+#### (6) Docker 볼륨 영속성 검증
 Docker 볼륨을 생성하고 컨테이너에 연결한다.
 컨테이너 삭제 전/후로 데이터를 확인하여 데이터가 유지됨을 증명한다.
 기술 문서에 생성/연결/검증 절차(명령+출력)를 포함한다.
