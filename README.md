@@ -21,6 +21,17 @@ Git: 2.53.0
 - 검증 증거: [env 결과](./evidence/0.env_img/0.env.png)
 
 ## 3. 레포지터리 구조
+```
+E1-1/
+├── README.md                      # 프로젝트 전체 학습 내용 및 실습 결과 정리 문서
+└── evidence/                      # 실습 과정에서 캡처한 모든 증거 자료 저장 폴더
+    ├── 0.env_img/                 # OS, 쉘, Docker, Git 환경 정보 확인 증거 폴더
+    ├── 1.terminal_img/            # 리눅스 CLI 기본 조작 및 파일 권한 실습 증거 폴더
+    ├── 2.docker/                  # Docker 설치, 컨테이너 운영, 커스텀 이미지, 볼륨 실습 증거 폴더
+    ├── 3.git/                     # Git 설정 및 GitHub 연동 증거 폴더
+    ├── 4.trouble_shooting/        # 실습 중 발생한 WSL 및 볼륨 충돌 이슈 해결 증거 폴더
+    └── 5.bonus/                   # 선택 보너스 과제(Git SSH 키 설정 등) 증거 폴더
+```
 
 ## 4. 수행 항목 체크리스트(터미널/권한/Docker/Dockerfile/포트/볼륨/Git/GitHub)
 
