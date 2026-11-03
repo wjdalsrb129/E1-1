@@ -722,6 +722,10 @@ docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 
 5. GitHub SSH 키 설정
     - HTTPS 대신 SSH로 푸시가 가능하도록 키를 등록하고 동작을 확인한다.
     - 배움 포인트: 인증 방식 차이와 보안 습관
+    - 검증 방법(명령어): `ssh-keygen -t ed25519 -C wjdalsrb129@gmail.com`, `cat ~/.ssh/id_ed25519.pub`
+        - 검증 결과(출력): <br><br>
+            ![git_ssh](./evidence/5.bonus/5-1.git_ssh.png)
+            ![git_ssh_result](./evidence/5.bonus/5-2.git_ssh_result.png)
 
 
 ## 과제 목표
