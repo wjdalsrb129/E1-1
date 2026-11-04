@@ -526,15 +526,6 @@ docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 
     &rarr; 현재 running 중인 컨테이너만 접근 가능하나, exit 실행 시 컨테이너가 **종료**됨
     - 검증 증거: [`docker attach` 결과](./evidence/2.docker/3-4.docker-attach.png)
 
-
-
-- 간단한 웹 서버를 Dockerfile로 컨테이너화
-- 포트 매핑으로 접속을 확인
-- 바인드 마운트/볼륨으로 "변경 반영"과 "데이터 영속성"을 직접 검증
-
-
-
-
 #### (4) 기존 Dockerfile 기반 커스텀 이미지 제작
 아래 방식 중 하나를 선택하여 기존 Dockerfile/이미지 기반의 커스텀 이미지를 만든다.
 (A) 웹 서버 베이스 이미지 활용(예: NGINX/Apache 등) + 정적 콘텐츠/설정만 교체
@@ -669,7 +660,7 @@ docker images, docker ps -a, docker logs, docker stats 등 운영 명령 실행 
     ```
     $ git config user.name wjdalsrb129
     
-    $ git config user.email wjdalsrb129@gamli.com
+    $ git config user.email wjdalsrb129@gmail.com
     
     $ git config --global init.defaultBranch main
     
